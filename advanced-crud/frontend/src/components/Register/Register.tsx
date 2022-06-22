@@ -22,7 +22,7 @@ const Register = (): JSX.Element => {
             password: password.value
         }
 
-        const req = await fetch('api/user/create', {
+        const req = await fetch('http://localhost:3001/api/user/create', {
             headers: {
                 "Content-Type": "application/json"
             },

@@ -42,15 +42,18 @@ export class UserService {
             .then(res => res.map(el => el.friendId));
 
 
-        console.log(findFollowGroups)
+        let queryBuilderUser: UserEntity[] = [];
+        let queryBuilderGroups: GroupEntity[] = [];
 
+        if (friendsId.length !== 0) {
+            queryBuilderUser = await createQueryBuilder(UserEntity, "user")
+                .andWhere('user.id in (:...id)', { id: friendsId }).getMany();
+        }
 
-        const queryBuilderUser = await createQueryBuilder(UserEntity, "user")
-            .where('user.id in (:...id)', { id: friendsId }).getMany();
-
-
-        const queryBuilderGroups = await createQueryBuilder(GroupEntity, "group")
-            .where('group.id in (:...id)', { id: findFollowGroups }).getMany();
+        if (findFollowGroups.length !== 0) {
+            queryBuilderGroups = await createQueryBuilder(GroupEntity, "group")
+                .andWhere('group.id in (:...id)', { id: findFollowGroups }).getMany();
+        }
 
 
 

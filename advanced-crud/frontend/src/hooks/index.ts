@@ -4,7 +4,7 @@ export const fetchWithAuthenticated = async (param: string = '', token: string, 
 
     if (!data) {
 
-        const req = await fetch('api/' + param + dinParam, {
+        const req = await fetch('http://localhost:3001/api/' + param + dinParam, {
             method: method ?? 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ export const fetchWithAuthenticated = async (param: string = '', token: string, 
     }
 
 
-    const req = await fetch('api/' + param + dinParam, {
+    const req = await fetch('http://localhost:3001/api/' + param + dinParam, {
         method: method ?? 'POST',
         headers: {
             'Content-Type': 'application/json',

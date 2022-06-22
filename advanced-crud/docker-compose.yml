@@ -5,9 +5,10 @@ services:
   backend:
     container_name: project-backend
     build: ./backend
-    command: npm run start:dev
-    # command: npm run start
+    command: npm run start
     restart: unless-stopped
+    ports:
+      - "3001:3001"
     networks:
       - single-network
     environment:
@@ -20,6 +21,8 @@ services:
   frontend:
     container_name: project-frontend
     build: ./frontend
+    ports:
+      - "3000:3000"
     command: serve -s build -l 3000
     restart: unless-stopped
     networks:
@@ -27,19 +30,19 @@ services:
     depends_on:
       - backend
 
-  nginx:
-    image: nginx:stable-alpine
-    container_name: project-nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
-    depends_on:
-      - frontend
-      - backend
-      - db_postgres
-    networks:
-      - single-network
+  # nginx:
+  #   image: nginx:stable-alpine
+  #   container_name: project-nginx
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+  #   depends_on:
+  #     - frontend
+  #     - backend
+  #     - db_postgres
+  #   networks:
+  #     - single-network
 
   db_postgres:
     container_name: project-database
@@ -48,7 +51,7 @@ services:
       - POSTGRES_USER=osman
       - POSTGRES_PASSWORD=123
       - POSTGRES_DB=first
-    image: postgres:14.3
+    image: postgres:14.3-alpine
     networks:
       - single-network
     volumes:

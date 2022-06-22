@@ -23,7 +23,7 @@ const Login = (): JSX.Element => {
             password: password.value
         }
 
-        const req = await fetch('api/user/login', {
+        const req = await fetch('http://localhost:3001/api/user/login', {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json"
