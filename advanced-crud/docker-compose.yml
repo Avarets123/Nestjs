@@ -17,6 +17,7 @@ services:
       - PORT=3001
     depends_on:
       - db_postgres
+      - frontend
 
   frontend:
     container_name: project-frontend
