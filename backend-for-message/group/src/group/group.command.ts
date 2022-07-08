@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CreateGroupDto } from './dto/create.group.dto';
+import { CreateMessageGroup } from './dto/create.messageGroup.dto';
 import { GroupEntity } from './entity/group.entity';
 import { GroupRepository } from './repository/group.repository';
 
@@ -25,5 +26,10 @@ export class GroupCommand {
   @Post('addMember')
   async addMemberInGroup(@Body() data: { groupId: number; userId: number }): Promise<GroupEntity> {
     return await this.groupRepository.addMemberInGroup(data.groupId, data.userId);
+  }
+
+  @Post('sendMessage')
+  async addMessageGroup(@Body() dto: CreateMessageGroup): Promise<GroupEntity> {
+    return await this.groupRepository.addMessageGroup(dto);
   }
 }

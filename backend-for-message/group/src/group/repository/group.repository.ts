@@ -2,7 +2,9 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateGroupDto } from '../dto/create.group.dto';
+import { CreateMessageGroup } from '../dto/create.messageGroup.dto';
 import { GroupEntity } from '../entity/group.entity';
+import { MessageEntity } from '../entity/message.entity';
 import { UserEntity } from '../entity/user.entity';
 
 @Injectable()
@@ -10,6 +12,7 @@ export class GroupRepository {
   constructor(
     @InjectRepository(GroupEntity) private groupRepository: Repository<GroupEntity>,
     @InjectRepository(UserEntity) private userRepository: Repository<UserEntity>,
+    @InjectRepository(MessageEntity) private messageRepository: Repository<MessageEntity>,
   ) {}
 
   async createGroup(dto: CreateGroupDto): Promise<GroupEntity> {
@@ -42,10 +45,36 @@ export class GroupRepository {
     if (!hasGroup || !hasUser) {
       throw new HttpException(`Group or user dont exist`, HttpStatus.BAD_REQUEST);
     }
-    console.log(hasGroup.members);
 
     hasGroup.members.push(hasUser);
 
+    return await this.groupRepository.save(hasGroup);
+  }
+
+  async addMessageGroup(dto: CreateMessageGroup): Promise<GroupEntity> {
+    const { message, groupId } = dto;
+
+    console.log(message);
+
+    const hasGroup = await this.groupRepository.findOne({
+      where: { id: groupId },
+      relations: { messages: true },
+    });
+
+    console.log(hasGroup);
+
+    if (!hasGroup) {
+      throw new HttpException(`Group dont exist`, HttpStatus.BAD_REQUEST);
+    }
+
+    console.log(hasGroup.messages);
+
+    let newMessage = new MessageEntity();
+    newMessage.fromUser = message.fromUser;
+    newMessage.message = message.message;
+    await this.messageRepository.save(newMessage);
+
+    hasGroup.messages.push(newMessage);
     return await this.groupRepository.save(hasGroup);
   }
 }

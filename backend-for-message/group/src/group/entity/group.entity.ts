@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -29,7 +30,7 @@ export class GroupEntity {
 
   @OneToMany(() => MessageEntity, (message) => message.id)
   @JoinColumn()
-  messages: number[];
+  messages: MessageEntity[];
 
   @ManyToMany(() => UserEntity)
   @JoinTable()
