@@ -23,7 +23,7 @@ export class GroupRepository {
     if (id) {
       return await this.groupRepository.findOne({
         where: { id },
-        relations: { creator: true },
+        relations: { creator: true, members: true },
       });
     }
 
@@ -44,7 +44,7 @@ export class GroupRepository {
     }
     console.log(hasGroup.members);
 
-    hasGroup.members.push(hasUser.id);
+    hasGroup.members.push(hasUser);
 
     return await this.groupRepository.save(hasGroup);
   }

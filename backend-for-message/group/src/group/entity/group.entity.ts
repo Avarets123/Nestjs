@@ -31,7 +31,7 @@ export class GroupEntity {
   @JoinColumn()
   messages: number[];
 
-  @ManyToMany(() => UserEntity, (user) => user.id)
+  @ManyToMany(() => UserEntity)
   @JoinTable()
-  members: number[];
+  members: UserEntity[];
 }
