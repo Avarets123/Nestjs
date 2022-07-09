@@ -75,4 +75,19 @@ export class GroupRepository {
     await this.messageRepository.save(newMessage);
     return await this.groupRepository.save(hasGroup);
   }
+
+  async delMemberGroup(groupId: number, creatorId: number, delUserLogin: string): Promise<GroupEntity> {
+    const group = await this.groupRepository.findOne({
+      where: { id: groupId },
+      relations: { members: true, creator: true },
+    });
+
+    //@ts-ignore
+    if (!group || group.creator.id !== creatorId) {
+      throw new HttpException('У вас нет прав !', HttpStatus.FORBIDDEN);
+    }
+
+    group.members = group.members.filter((user) => user.login !== delUserLogin);
+    return await this.groupRepository.save(group);
+  }
 }

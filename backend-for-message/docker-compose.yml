@@ -1,6 +1,19 @@
 version: '3'
 
 services:
+  
+  rabbitmq:
+    container_name: rabbitmq
+    restart: unless-stopped
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+
   db_app:
    container_name: db_postgres
    restart: unless-stopped

@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { DeleteResult } from 'typeorm';
 import { CreateGroupDto } from './dto/create.group.dto';
 import { CreateMessageGroup } from './dto/create.messageGroup.dto';
 import { GroupEntity } from './entity/group.entity';
@@ -13,16 +14,6 @@ export class GroupCommand {
     return await this.groupRepository.createGroup(dto);
   }
 
-  @Get('get/:id')
-  async getGroupById(@Param('id') id: number): Promise<GroupEntity | GroupEntity[]> {
-    return await this.groupRepository.getGroupByIdOrAllGroups(id);
-  }
-
-  @Get('get')
-  async getAllGroup(): Promise<GroupEntity[] | GroupEntity> {
-    return await this.groupRepository.getGroupByIdOrAllGroups();
-  }
-
   @Post('addMember')
   async addMemberInGroup(@Body() data: { groupId: number; userId: number }): Promise<GroupEntity> {
     return await this.groupRepository.addMemberInGroup(data.groupId, data.userId);
@@ -31,5 +22,15 @@ export class GroupCommand {
   @Post('sendMessage')
   async addMessageGroup(@Body() dto: CreateMessageGroup): Promise<GroupEntity> {
     return await this.groupRepository.addMessageGroup(dto);
+  }
+
+  @Post('delMember')
+  async deleteMember(@Body() dto: { groupId: number; creatorId: number; delUserLogin: string }): Promise<GroupEntity> {
+    return await this.groupRepository.delMemberGroup(dto.groupId, dto.creatorId, dto.delUserLogin);
+  }
+
+  @Delete('delete')
+  async delGroup(@Body('groupId') groupId: number): Promise<DeleteResult> {
+    return await this.groupRepository.deleteGroup(groupId);
   }
 }
