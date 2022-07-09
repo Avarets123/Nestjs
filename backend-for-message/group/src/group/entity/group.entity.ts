@@ -1,5 +1,4 @@
 import {
-  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -10,6 +9,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ICreateMessage } from '../dto/create.messageGroup.dto';
 import { MessageEntity } from './message.entity';
 import { UserEntity } from './user.entity';
 
@@ -28,9 +28,9 @@ export class GroupEntity {
   @JoinColumn()
   creator: number;
 
-  @OneToMany(() => MessageEntity, (message) => message.id)
+  @OneToMany(() => MessageEntity, (mess) => mess.group)
   @JoinColumn()
-  messages: MessageEntity[];
+  messages: ICreateMessage[];
 
   @ManyToMany(() => UserEntity)
   @JoinTable()

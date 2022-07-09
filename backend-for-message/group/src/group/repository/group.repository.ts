@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { CreateGroupDto } from '../dto/create.group.dto';
 import { CreateMessageGroup } from '../dto/create.messageGroup.dto';
 import { GroupEntity } from '../entity/group.entity';
@@ -26,7 +26,7 @@ export class GroupRepository {
     if (id) {
       return await this.groupRepository.findOne({
         where: { id },
-        relations: { creator: true, members: true },
+        relations: { creator: true, members: true, messages: true },
       });
     }
 
@@ -51,30 +51,28 @@ export class GroupRepository {
     return await this.groupRepository.save(hasGroup);
   }
 
+  async deleteGroup(groupId: number): Promise<DeleteResult> {
+    return await this.groupRepository.delete({ id: groupId });
+  }
+
   async addMessageGroup(dto: CreateMessageGroup): Promise<GroupEntity> {
     const { message, groupId } = dto;
-
-    console.log(message);
 
     const hasGroup = await this.groupRepository.findOne({
       where: { id: groupId },
       relations: { messages: true },
     });
 
-    console.log(hasGroup);
-
     if (!hasGroup) {
       throw new HttpException(`Group dont exist`, HttpStatus.BAD_REQUEST);
     }
 
-    console.log(hasGroup.messages);
-
-    let newMessage = new MessageEntity();
-    newMessage.fromUser = message.fromUser;
-    newMessage.message = message.message;
-    await this.messageRepository.save(newMessage);
+    const newMessage = new MessageEntity();
+    Object.assign(newMessage, message);
 
     hasGroup.messages.push(newMessage);
+
+    await this.messageRepository.save(newMessage);
     return await this.groupRepository.save(hasGroup);
   }
 }

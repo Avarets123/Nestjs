@@ -1,8 +1,9 @@
 export class CreateMessageGroup {
   groupId: number;
-  message: {
-    fromUser: number;
-    message: string;
-    toUser?: number;
-  };
+  message: ICreateMessage;
+}
+
+export interface ICreateMessage {
+  fromUser: number;
+  message: string;
 }
