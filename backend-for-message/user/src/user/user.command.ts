@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Param, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
+import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update.user.dto';
-import { UserEntity } from './entities/user.entity';
+import { UserEntity } from './entity/user.entity';
 import { UserRepository } from './repository/user.repository';
 
 @Controller('user')

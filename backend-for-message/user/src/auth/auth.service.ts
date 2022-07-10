@@ -4,7 +4,7 @@ import { UserRepository } from 'src/user/repository/user.repository';
 import { LoginDto } from './dto/login.dto';
 import { compare } from 'bcryptjs';
 import { RegisterUserDto } from './dto/register.user.dto';
-import { UserEntity } from 'src/user/entities/user.entity';
+import { UserEntity } from 'src/user/entity/user.entity';
 import { IResUserWithToken } from 'src/interfaces/resp.user.withToken';
 
 @Injectable()

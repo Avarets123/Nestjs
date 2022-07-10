@@ -1,4 +1,4 @@
-import { UserEntity } from 'src/user/entities/user.entity';
+import { UserEntity } from 'src/user/entity/user.entity';
 
 export interface IResUserWithToken {
   user: UserEntity;

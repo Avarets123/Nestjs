@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 
 services:
   
@@ -7,14 +7,37 @@ services:
     restart: unless-stopped
     image: rabbitmq:3-management
     environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+      - RABBITMQ_DEFAULT_USER=${RMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RMQ_PASS}
     ports:
       - "15672:15672"
       - "5672:5672"
+    
+  user:
+    container_name: user-service
+    restart: unless-stopped
+    build: ./user
+    command: npm run start
+    ports:
+      - ${USER_PORT}:${USER_PORT}
+    depends_on: 
+      - db_postgres
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - USER_PORT=${USER_PORT}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - RMQ_USER=${RMQ_USER}
+      - RMQ_PASS=${RMQ_PASS}
+      - RMQ_EXCHANGE=${RMQ_EXCHANGE}
+      - RMQ_HOSTNAME=rabbitmq
+      - RMQ_QUEUE=${RMQ_QUEUE}
 
 
-  db_app:
+
+  db_postgres:
    container_name: db_postgres
    restart: unless-stopped
    image: postgres:14.3-alpine

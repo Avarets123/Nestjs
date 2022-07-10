@@ -6,7 +6,7 @@ export const configTypeorm = (): TypeOrmModuleAsyncOptions => ({
   inject: [ConfigService],
   useFactory: (config: ConfigService) => ({
     type: 'postgres',
-    host: 'localhost',
+    host: config.get('POSTGRES_HOST') ?? 'localhost',
     port: config.get<number>('POSTGRES_PORT'),
     database: config.get('POSTGRES_DB'),
     username: config.get('POSTGRES_USER'),
