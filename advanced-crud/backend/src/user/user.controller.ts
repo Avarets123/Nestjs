@@ -6,7 +6,6 @@ import { AuthGuard } from './guard/auth.guard';
 import { IUserResponse } from './interfaces/response-user.interface';
 import { UserEntity } from './entity/user.entity';
 import { UserService } from './user.service';
-import { DeleteResult } from 'typeorm';
 
 @Controller('api/user')
 export class UserController {

@@ -18,11 +18,11 @@ export class UserEntity {
   @OneToMany(() => GroupEntity, (group) => group.creator)
   createGroup: GroupEntity[];
 
-  @ManyToMany(() => GroupEntity, (group) => group.id)
+  @ManyToMany(() => GroupEntity)
   @JoinTable()
-  groups: number[];
+  groups: GroupEntity[];
 
-  @ManyToMany(() => UserEntity, (user) => user.id)
+  @ManyToMany(() => UserEntity)
   @JoinTable()
-  friends: number[];
+  friends: UserEntity[];
 }

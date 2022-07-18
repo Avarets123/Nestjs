@@ -28,9 +28,10 @@ export class GroupEntity {
     this.updateAt = new Date();
   }
 
-  @ManyToOne(() => UserEntity, (user) => user.createGroup, { eager: true })
+  @ManyToOne(() => UserEntity, (user) => user.createGroup)
   creator: UserEntity;
 
-  @ManyToMany(() => UserEntity, (user) => user.id)
-  users: number[];
+  @ManyToMany(() => UserEntity)
+  @JoinTable()
+  users: UserEntity[];
 }

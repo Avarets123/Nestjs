@@ -1,7 +1,7 @@
 import { UserEntity } from '@app/user/entity/user.entity';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, getManager, Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { GroupEntity } from './entity/group.entity';
 
@@ -12,8 +12,12 @@ export class GroupService {
     @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async getAllGroup(): Promise<GroupEntity[]> {
-    const groups = await this.groupRepository.find();
+  async getAllGroupOrOneGroup(groupId?: number): Promise<GroupEntity[] | GroupEntity> {
+    if (groupId) {
+      return await this.groupRepository.findOne({ id: groupId }, { relations: ['creator', 'users'] });
+    }
+
+    const groups = await this.groupRepository.find({ relations: ['creator', 'users'] });
     groups.map((el) => delete el.creator.password);
     return groups;
   }
@@ -21,19 +25,20 @@ export class GroupService {
   async createGroup(createGroupDto: CreateGroupDto, currentUser: UserEntity): Promise<GroupEntity | string> {
     const { name } = createGroupDto;
 
-    const hasGroup = await this.groupRepository.findOne({ name }, { relations: ['users'] });
+    const hasGroup = await this.groupRepository.findOne({ name }, { relations: ['users', 'creator'] });
     const user = await this.userRepository.findOne({ id: currentUser.id }, { relations: ['groups'] });
 
     if (hasGroup) {
-      user.groups.push(hasGroup.id);
-      hasGroup.users.push(user.id);
-      return hasGroup;
+      user.groups.push(hasGroup);
+      hasGroup.users.push(user);
+
+      await this.userRepository.save(user);
+      return await this.groupRepository.save(hasGroup);
     }
 
     const newGroup = new GroupEntity();
     Object.assign(newGroup, createGroupDto);
     newGroup.creator = user;
-    newGroup.users.push(user.id);
     await this.groupRepository.save(newGroup);
 
     return newGroup;

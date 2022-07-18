@@ -9,37 +9,39 @@ import { GroupService } from './group.service';
 
 @Controller('api/group')
 export class GroupController {
-    constructor(private readonly groupService: GroupService) { }
+  constructor(private readonly groupService: GroupService) {}
 
+  @Get('all')
+  async getAll(): Promise<GroupEntity[] | GroupEntity> {
+    return await this.groupService.getAllGroupOrOneGroup();
+  }
 
-    @Get()
-    async getAll(): Promise<GroupEntity[]> {
-        return await this.groupService.getAllGroup();
-    }
+  @Get('get/:id')
+  async getOneGroup(@Param('id') id: number): Promise<GroupEntity[] | GroupEntity> {
+    return await this.groupService.getAllGroupOrOneGroup(id);
+  }
 
+  @Post('create')
+  @UseGuards(AuthGuard)
+  async createGroup(
+    @Body() createGroupDto: CreateGroupDto,
+    @User() currenstUser: UserEntity,
+  ): Promise<GroupEntity | string> {
+    return await this.groupService.createGroup(createGroupDto, currenstUser);
+  }
 
-    @Post('create')
-    @UseGuards(AuthGuard)
-    async createGroup(@Body() createGroupDto: CreateGroupDto, @User() currenstUser: UserEntity): Promise<GroupEntity | string> {
-        return await this.groupService.createGroup(createGroupDto, currenstUser)
+  @Put(':name')
+  @UseGuards(AuthGuard)
+  async updateGroup(
+    @Body() createGroupDto: CreateGroupDto,
+    @Param('name') nameGroup: string,
+  ): Promise<GroupEntity> {
+    return await this.groupService.updateGroup(createGroupDto, nameGroup);
+  }
 
-    }
-
-
-    @Put(':name')
-    @UseGuards(AuthGuard)
-    async updateGroup(@Body() createGroupDto: CreateGroupDto, @Param('name') nameGroup: string): Promise<GroupEntity> {
-        return await this.groupService.updateGroup(createGroupDto, nameGroup);
-    }
-
-
-    @Delete(':name')
-    @UseGuards(AuthGuard)
-    async deleteGroup(@Param('name') name: string, @User('id') currentUserId: number): Promise<DeleteResult> {
-        return await this.groupService.deleteGroup(name, currentUserId);
-    }
-
-
-
-
+  @Delete(':name')
+  @UseGuards(AuthGuard)
+  async deleteGroup(@Param('name') name: string, @User('id') currentUserId: number): Promise<DeleteResult> {
+    return await this.groupService.deleteGroup(name, currentUserId);
+  }
 }

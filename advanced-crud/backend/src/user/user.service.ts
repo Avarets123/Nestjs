@@ -29,11 +29,9 @@ export class UserService {
   }
 
   async getAllUsers(): Promise<UserEntity[]> {
-    const users = await this.userRepository.find();
-
-    return users.map((el) => {
-      delete el.password;
-      return el;
+    return await this.userRepository.find({
+      select: ['id', 'name', 'email', 'createGroup'],
+      relations: ['friends', 'groups'],
     });
   }
 
@@ -110,7 +108,7 @@ export class UserService {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    currentUser.friends.push(findFriend.id);
+    currentUser.friends.push(findFriend);
     return await this.userRepository.save(currentUser);
   }
 
@@ -122,7 +120,7 @@ export class UserService {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    currentUser.friends = currentUser.friends.filter((el) => el !== findFriend.id);
+    currentUser.friends = currentUser.friends.filter((el) => el.id !== findFriend.id);
 
     return await this.userRepository.save(currentUser);
   }
