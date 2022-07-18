@@ -8,8 +8,11 @@ async function bootstrap() {
 
   const port = config.get('USER_PORT');
 
-  await app.listen(port, () => {
-    console.log(`User service started in port: ${port}`);
-  });
+  // await app.listen(port, () => {
+  //   console.log(`User service started in port: ${port}`);
+  // });
+
+  await app.init();
+  console.log('User service started!');
 }
 bootstrap();

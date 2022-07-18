@@ -19,10 +19,7 @@ export class UserRepository {
     const oldUser = await this.userRepository.findOneBy({ email });
 
     if (oldUser) {
-      throw new HttpException(
-        'Пользователь с таким email уже зарегистрирован',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Пользователь с таким email уже зарегистрирован', HttpStatus.BAD_REQUEST);
     }
 
     const newUser = new UserEntity();
@@ -43,25 +40,19 @@ export class UserRepository {
     }
 
     if (!hasUser) {
-      throw new HttpException(
-        'Пользователь с таким id не сущетсвует',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Пользователь с таким id не сущетсвует', HttpStatus.BAD_REQUEST);
     }
 
     return await this.userRepository.delete({ id: userId });
   }
 
-  async updateUser(dto: UpdateUserDto, userId: string): Promise<UserEntity> {
+  async updateUser(dto: UpdateUserDto, userId: number): Promise<UserEntity> {
     const { password } = dto;
 
     const hasUser = await this.userRepository.findOneBy({ id: +userId });
 
     if (!hasUser) {
-      throw new HttpException(
-        'Пользователь с таким email не существует',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('Пользователь с таким email не существует', HttpStatus.BAD_REQUEST);
     }
 
     Object.assign(hasUser, dto);
@@ -74,11 +65,7 @@ export class UserRepository {
     return await this.userRepository.find();
   }
 
-  async getUserBy(
-    id?: number,
-    email?: string,
-    login?: string,
-  ): Promise<UserEntity> {
+  async getUserBy(id?: number, email?: string, login?: string): Promise<UserEntity> {
     return id
       ? await this.userRepository.findOneBy({ id })
       : email

@@ -8,6 +8,6 @@ export namespace UserGetAll {
     login?: string;
     email: string;
     password: string;
-    created: string;
+    created: Date;
   }
 }

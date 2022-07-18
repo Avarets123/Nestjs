@@ -1,24 +1,20 @@
-import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
-import { DeleteResult } from 'typeorm';
-import { CreateUserDto } from './dto/create.user.dto';
-import { UpdateUserDto } from './dto/update.user.dto';
-import { UserEntity } from './entity/user.entity';
+import { Body, Controller } from '@nestjs/common';
+import { RMQRoute } from 'nestjs-rmq';
+import { UserDelete } from 'src/contracts/user/user.delete.command';
+import { UserUpdate } from 'src/contracts/user/user.update.command';
 import { UserRepository } from './repository/user.repository';
 
-@Controller('user')
+@Controller()
 export class UserCommand {
   constructor(private userRepository: UserRepository) {}
 
-  @Put('update/:id')
-  async updateUser(
-    @Body() dto: UpdateUserDto,
-    @Param('id') userId: string,
-  ): Promise<UserEntity> {
-    return await this.userRepository.updateUser(dto, userId);
+  @RMQRoute(UserUpdate.topic)
+  async updateUser(@Body() { userData, userId }: UserUpdate.Request): Promise<UserUpdate.Response> {
+    return await this.userRepository.updateUser(userData, userId);
   }
 
-  @Delete('delete/:id')
-  async deleteUser(@Param('id') userId: string): Promise<DeleteResult> {
-    return await this.userRepository.deleteUser(+userId);
+  @RMQRoute(UserDelete.topic)
+  async deleteUser({ userId }: UserDelete.Request): Promise<UserDelete.Response> {
+    return await this.userRepository.deleteUser(userId);
   }
 }

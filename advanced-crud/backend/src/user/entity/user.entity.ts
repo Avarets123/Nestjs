@@ -1,25 +1,28 @@
-import { GroupEntity } from "@app/group/entity/group.entity";
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { GroupEntity } from '@app/group/entity/group.entity';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'users' })
 export class UserEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  @Column()
+  name: string;
 
-    @Column()
-    name: string;
+  @Column()
+  email: string;
 
-    @Column()
-    email: string;
+  @Column()
+  password: string;
 
-    @Column()
-    password: string;
+  @OneToMany(() => GroupEntity, (group) => group.creator)
+  createGroup: GroupEntity[];
 
+  @ManyToMany(() => GroupEntity, (group) => group.id)
+  @JoinTable()
+  groups: number[];
 
-    @OneToMany(() => GroupEntity, group => group.creator)
-    createGroup: GroupEntity[];
-
-
-
+  @ManyToMany(() => UserEntity, (user) => user.id)
+  @JoinTable()
+  friends: number[];
 }

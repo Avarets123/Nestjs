@@ -4,8 +4,13 @@ import { AppModule } from './src/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   const config = app.get(ConfigService);
   const port = config.get('API_SERVICE_PORT');
+
+  const prefixGlobal = 'api';
+  app.setGlobalPrefix(prefixGlobal);
+
   await app.listen(port, () => {
     console.log(`Api server has ben started in port: ${port}`);
   });

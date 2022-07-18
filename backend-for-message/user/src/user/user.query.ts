@@ -1,15 +1,15 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller } from '@nestjs/common';
 import { RMQRoute } from 'nestjs-rmq';
-import { UserEntity } from './entity/user.entity';
 import { UserRepository } from './repository/user.repository';
-import { UserGetAll } from '../contracts/user/getusers.query';
+import { UserGetAll } from '../contracts/user/user.getAll.query';
+import { UserGetById } from 'src/contracts/user/user.getById.query';
 @Controller()
 export class UserQuery {
   constructor(private userRepository: UserRepository) {}
 
-  @Get('user/:id')
-  async getUserBy(@Param('id') id: string): Promise<UserEntity> {
-    return await this.userRepository.getUserBy(+id);
+  @RMQRoute(UserGetById.topic)
+  async getUserBy(@Body() { id }: UserGetById.Request): Promise<UserGetById.Response> {
+    return await this.userRepository.getUserBy(id);
   }
 
   @RMQRoute(UserGetAll.topic)

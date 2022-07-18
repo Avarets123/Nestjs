@@ -1,22 +1,20 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { IResUserWithToken } from 'src/interfaces/resp.user.withToken';
-import { CreateUserDto } from 'src/user/dto/create.user.dto';
+import { Body, Controller } from '@nestjs/common';
+import { RMQRoute } from 'nestjs-rmq';
+import { UserLogin } from 'src/contracts/user/user.login.query';
+import { UserRegister } from 'src/contracts/user/user.register.command';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
 
-@Controller('auth')
+@Controller()
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Post('register')
-  async createUser(@Body() dto: CreateUserDto): Promise<IResUserWithToken> {
+  @RMQRoute(UserRegister.topic)
+  async createUser(@Body() dto: UserRegister.Request): Promise<UserRegister.Response> {
     return await this.authService.registerUser(dto);
   }
 
-  @Post('login')
-  async loginUser(
-    @Body() dto: LoginDto,
-  ): Promise<{ email: string; token: string }> {
+  @RMQRoute(UserLogin.topic)
+  async loginUser(@Body() dto: UserLogin.Request): Promise<UserLogin.Response> {
     return await this.authService.login(dto);
   }
 }

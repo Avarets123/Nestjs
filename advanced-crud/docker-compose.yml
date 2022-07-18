@@ -1,7 +1,6 @@
 version: '3'
 
 services:
-
   backend:
     container_name: project-backend
     build: ./backend
@@ -17,7 +16,6 @@ services:
       - PORT=${BACKEND_PORT}
     depends_on:
       - db_postgres
-
   frontend:
     container_name: project-frontend
     build: ./frontend
@@ -29,7 +27,6 @@ services:
       - single-network
     depends_on:
       - backend
-
   # nginx:
   #   image: nginx:stable-alpine
   #   container_name: project-nginx
@@ -47,6 +44,8 @@ services:
   db_postgres:
     container_name: project-database
     restart: always
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -59,6 +58,5 @@ services:
 networks:
   single-network:
     driver: bridge
-
 volumes:
   postgres_data:

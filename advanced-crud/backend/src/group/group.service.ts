@@ -3,110 +3,64 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, getManager, Repository } from 'typeorm';
 import { CreateGroupDto } from './dto/create-group.dto';
-import { FollowEntity } from './entity/follow.entity';
 import { GroupEntity } from './entity/group.entity';
 
 @Injectable()
 export class GroupService {
+  constructor(
+    @InjectRepository(GroupEntity) private readonly groupRepository: Repository<GroupEntity>,
+    @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
+  ) {}
 
-    constructor(
-        @InjectRepository(GroupEntity) private readonly groupRepository: Repository<GroupEntity>,
-        @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,
-        @InjectRepository(FollowEntity) private readonly followRepository: Repository<FollowEntity>
-    ) { }
+  async getAllGroup(): Promise<GroupEntity[]> {
+    const groups = await this.groupRepository.find();
+    groups.map((el) => delete el.creator.password);
+    return groups;
+  }
 
+  async createGroup(createGroupDto: CreateGroupDto, currentUser: UserEntity): Promise<GroupEntity | string> {
+    const { name } = createGroupDto;
 
-    async getAllGroup(): Promise<GroupEntity[]> {
-        const groups = await this.groupRepository.find();
-        groups.map(el => delete el.creator.password);
-        return groups;
+    const hasGroup = await this.groupRepository.findOne({ name }, { relations: ['users'] });
+    const user = await this.userRepository.findOne({ id: currentUser.id }, { relations: ['groups'] });
+
+    if (hasGroup) {
+      user.groups.push(hasGroup.id);
+      hasGroup.users.push(user.id);
+      return hasGroup;
     }
 
+    const newGroup = new GroupEntity();
+    Object.assign(newGroup, createGroupDto);
+    newGroup.creator = user;
+    newGroup.users.push(user.id);
+    await this.groupRepository.save(newGroup);
 
+    return newGroup;
+  }
 
-    async createGroup(createGroupDto: CreateGroupDto, currenstUser: UserEntity): Promise<GroupEntity | string> {
+  async updateGroup(createGroupDto: CreateGroupDto, name: string): Promise<GroupEntity> {
+    const hasGroup = await this.groupRepository.findOne({ name });
 
-        const { name } = createGroupDto;
-
-        const hasGroup = await this.groupRepository.findOne({ name });
-
-
-        if (hasGroup) {
-
-            const hasFollow = await this.followRepository.findOne({
-                userId: currenstUser.id,
-                groupId: hasGroup.id
-            });
-
-
-            if (hasFollow) {
-                return 'На данную группу вы уже подписаны'
-            }
-
-            const follow = new FollowEntity();
-            follow.userId = currenstUser.id;
-            follow.groupId = hasGroup.id;
-            await this.followRepository.save(follow);
-
-            return hasGroup;
-        }
-
-
-
-        const newGroup = new GroupEntity();
-        Object.assign(newGroup, createGroupDto);
-        newGroup.creator = currenstUser;
-        await this.groupRepository.save(newGroup);
-
-
-
-
-
-        const follow = new FollowEntity();
-        follow.userId = currenstUser.id;
-        follow.groupId = newGroup.id;
-        await this.followRepository.save(follow);
-
-
-        return newGroup;
-
+    if (!hasGroup) {
+      throw new HttpException(`Group by ${name} dont excist`, HttpStatus.FORBIDDEN);
     }
 
-    async updateGroup(createGroupDto: CreateGroupDto, name: string): Promise<GroupEntity> {
+    Object.assign(hasGroup, createGroupDto);
+    return await this.groupRepository.save(hasGroup);
+  }
 
+  async deleteGroup(name: string, currentUserId: number): Promise<DeleteResult> {
+    const hasGroup = await this.groupRepository.findOne({ name });
 
-        const hasGroup = await this.groupRepository.findOne({ name });
-
-        if (!hasGroup) {
-            throw new HttpException(`Group by ${name} dont excist`, HttpStatus.FORBIDDEN);
-        }
-
-
-        Object.assign(hasGroup, createGroupDto);
-        return await this.groupRepository.save(hasGroup);
-
+    if (!hasGroup) {
+      throw new HttpException(`Group by ${name} dont excist`, HttpStatus.FORBIDDEN);
     }
 
-    async deleteGroup(name: string, currentUserId: number): Promise<DeleteResult> {
-
-        const hasGroup = await this.groupRepository.findOne({ name });
-
-        if (!hasGroup) {
-            throw new HttpException(`Group by ${name} dont excist`, HttpStatus.FORBIDDEN);
-        }
-
-        if (hasGroup.creator.id === currentUserId) {
-            return await this.groupRepository.delete({ name });
-        } else {
-            throw new HttpException('У вас нет прав', HttpStatus.FORBIDDEN);
-
-        }
-
-
+    if (hasGroup.creator.id === currentUserId) {
+      return await this.groupRepository.delete({ name });
+    } else {
+      throw new HttpException('У вас нет прав', HttpStatus.FORBIDDEN);
     }
-
-
-
-
-
+  }
 }

@@ -49,7 +49,7 @@ services:
      - ${POSTGRES_PORT}:${POSTGRES_PORT}
 
 
-volumes:
-  db_data:
+# volumes:
+#   db_data:
      
    
