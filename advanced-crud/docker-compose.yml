@@ -8,13 +8,13 @@ services:
     command: npm run start
     restart: unless-stopped
     ports:
-      - "3001:3001"
+      - ${BACKEND_PORT}:${BACKEND_PORT}
     networks:
       - single-network
     environment:
-      - POSTGRES_HOST=db_postgres
-      - POSTGRES_PORT=5432
-      - PORT=3001
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - PORT=${BACKEND_PORT}
     depends_on:
       - db_postgres
 
@@ -22,8 +22,8 @@ services:
     container_name: project-frontend
     build: ./frontend
     ports:
-      - "3000:3000"
-    command: serve -s build -l 3000
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
+    command: serve -s build -l ${FRONTEND_PORT}
     restart: unless-stopped
     networks:
       - single-network
@@ -48,9 +48,9 @@ services:
     container_name: project-database
     restart: always
     environment:
-      - POSTGRES_USER=osman
-      - POSTGRES_PASSWORD=123
-      - POSTGRES_DB=first
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     image: postgres:14.3-alpine
     networks:
       - single-network
