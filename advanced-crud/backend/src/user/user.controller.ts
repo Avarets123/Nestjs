@@ -7,7 +7,7 @@ import { IUserResponse } from './interfaces/response-user.interface';
 import { UserEntity } from './entity/user.entity';
 import { UserService } from './user.service';
 
-@Controller('api/user')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

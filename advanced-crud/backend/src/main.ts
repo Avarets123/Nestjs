@@ -8,6 +8,8 @@ async function bootstrap() {
     cors: true,
   });
 
+  app.setGlobalPrefix('api');
+
   await app.listen(port, () => {
     console.log(`Backend has ben started in port: ${port}`);
   });
