@@ -29,6 +29,7 @@ export class UserSchema implements UserEntity {
   // })
   age?: number;
 
+  @Exclude()
   @Column({ nullable: true })
   refreshToken: string;
 

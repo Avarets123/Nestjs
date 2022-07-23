@@ -8,11 +8,7 @@ import { LoginUserDto } from './dto/user.login.dto';
 
 @Injectable()
 export class MainService {
-  constructor(
-    private userRepository: UserRepository,
-    private jwtService: JwtService,
-    private configService: ConfigService,
-  ) {}
+  constructor(private userRepository: UserRepository) {}
 
   async createUser(dto: CreateUserDto): Promise<UserSchema> {
     let newUser = new UserSchema();
