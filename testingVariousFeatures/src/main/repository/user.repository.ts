@@ -11,8 +11,8 @@ export class UserRepository implements AbstractRepository<UserSchema> {
   async getAll(): Promise<UserSchema[]> {
     return await this.repository.find();
   }
-  async getOne(id: any): Promise<UserSchema> {
-    return await this.repository.findOne(id);
+  async getOne(email: string): Promise<UserSchema> {
+    return await this.repository.findOneBy({ email });
   }
   async delete(id: string | number): Promise<DeleteResult> {
     return await this.repository.delete(id);

@@ -29,6 +29,9 @@ export class UserSchema implements UserEntity {
   // })
   age?: number;
 
+  @Column({ nullable: true })
+  refreshToken: string;
+
   @BeforeInsert()
   private async hashPassword(): Promise<void> {
     this.password = await hash(this.password, 9);

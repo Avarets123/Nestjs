@@ -1,5 +1,16 @@
-import { Body, ClassSerializerInterceptor, Controller, Post, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Post,
+  Req,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { Request } from 'express';
+import { LocalAuthGuard } from './authentication/local.strategy';
 import { CreateUserDto } from './dto/user.create.dto';
+import { LoginUserDto } from './dto/user.login.dto';
 import { MainService } from './main.service';
 import { UserSchema } from './schema/user.schema';
 
@@ -11,5 +22,11 @@ export class MainController {
   @Post()
   async createUser(@Body() dto: CreateUserDto): Promise<UserSchema> {
     return await this.mainService.createUser(dto);
+  }
+
+  @UseGuards(LocalAuthGuard)
+  @Post('login')
+  async loginUser(@Body() dto: LoginUserDto, @Req() req: Request) {
+    return req.user;
   }
 }
