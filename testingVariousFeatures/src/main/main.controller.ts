@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Req,
   UseGuards,
   UseInterceptors,
@@ -49,7 +50,7 @@ export class MainController {
   }
 
   @Get('post')
-  async getAllPosts(): Promise<PostSchema[]> {
-    return await this.mainService.getAllPosts();
+  async getAllPosts(@Query() { offset, limit }): Promise<PostSchema[]> {
+    return await this.mainService.getAllPosts(offset, limit);
   }
 }

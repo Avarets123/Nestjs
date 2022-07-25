@@ -53,11 +53,16 @@ export class MainService {
     }
   }
 
-  async getAllPosts(): Promise<PostSchema[]> {
-    return await this.connection.manager.find(PostSchema, {
-      relations: {
-        author: true,
-      },
+  async getAllPosts(offset?: number, limit?: number): Promise<any> {
+    const [items, count] = await this.connection.manager.findAndCount(PostSchema, {
+      relations: { author: true },
+      skip: offset ?? 1,
+      take: limit ?? 10,
     });
+
+    return {
+      count,
+      items,
+    };
   }
 }
