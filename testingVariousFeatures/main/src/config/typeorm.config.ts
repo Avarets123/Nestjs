@@ -9,7 +9,7 @@ export const typeormConfig = (): TypeOrmModuleAsyncOptions => ({
     host: config.get('POSTGRES_HOST'),
     port: config.get('POSTGRES_PORT'),
     username: config.get('POSTGRES_USER'),
-    database: config.get('POSTGRES_DB'),
+    database: config.get('POSTGRES_DB_MAIN'),
     password: config.get('POSTGRES_PASSWORD'),
     autoLoadEntities: true,
     synchronize: true,
