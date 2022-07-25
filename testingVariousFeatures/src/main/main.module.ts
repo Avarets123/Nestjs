@@ -9,6 +9,7 @@ import { AuthService } from './authentication/auth.service';
 import { LocalStrategy } from './authentication/local.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './authentication/jwt.strategy';
+import { PostSchema } from './schema/post.schema';
 
 @Module({
   imports: [
@@ -18,11 +19,11 @@ import { JwtStrategy } from './authentication/jwt.strategy';
       useFactory: (config: ConfigService) => ({
         secret: config.get('JWT_ACCESS_TOKEN_SECRET'),
         signOptions: {
-          expiresIn: '5m',
+          expiresIn: '5d',
         },
       }),
     }),
-    TypeOrmModule.forFeature([UserSchema]),
+    TypeOrmModule.forFeature([UserSchema, PostSchema]),
   ],
   controllers: [MainController],
   providers: [AuthService, MainService, UserRepository, LocalStrategy, JwtStrategy],

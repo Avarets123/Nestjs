@@ -1,7 +1,16 @@
 import { hash } from 'bcrypt';
-import { Exclude, Transform } from 'class-transformer';
-import { BeforeInsert, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import {
+  BeforeInsert,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UserEntity } from '../entity/user.entity';
+import { PostSchema } from './post.schema';
 
 @Entity('user')
 export class UserSchema implements UserEntity {
@@ -32,6 +41,13 @@ export class UserSchema implements UserEntity {
   @Exclude()
   @Column({ nullable: true })
   refreshToken: string;
+
+  @OneToMany(() => PostSchema, (post) => post.author, {
+    cascade: true,
+    eager: true,
+  })
+  @JoinColumn()
+  posts: PostSchema[];
 
   @BeforeInsert()
   private async hashPassword(): Promise<void> {
