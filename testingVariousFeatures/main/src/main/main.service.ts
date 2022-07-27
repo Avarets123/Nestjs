@@ -6,10 +6,16 @@ import { LoginUserDto } from './dto/user.login.dto';
 import { CreatePostDto } from './dto/post.create.dto';
 import { DataSource } from 'typeorm';
 import { PostSchema } from './schema/post.schema';
+import { Mapper } from '@automapper/core';
+import { InjectMapper } from '@automapper/nestjs';
 
 @Injectable()
 export class MainService {
-  constructor(private userRepository: UserRepository, private connection: DataSource) {}
+  constructor(
+    @InjectMapper() private mapper: Mapper,
+    private userRepository: UserRepository,
+    private connection: DataSource,
+  ) {}
 
   async createUser(dto: CreateUserDto): Promise<UserSchema> {
     let newUser = new UserSchema();
@@ -23,6 +29,11 @@ export class MainService {
     Object.assign(newUser, dto);
 
     newUser = await this.userRepository.create(newUser);
+
+    const mapp = this.mapper.map(newUser, CreateUserDto, UserSchema);
+    console.log(this.mapper.map(dto, UserSchema, CreateUserDto));
+
+    console.log(mapp);
 
     return newUser;
   }

@@ -10,6 +10,7 @@ import { LocalStrategy } from './authentication/local.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './authentication/jwt.strategy';
 import { PostSchema } from './schema/post.schema';
+import { UserProfile } from './mapper/user.profile';
 
 @Module({
   imports: [
@@ -26,6 +27,6 @@ import { PostSchema } from './schema/post.schema';
     TypeOrmModule.forFeature([UserSchema, PostSchema]),
   ],
   controllers: [MainController],
-  providers: [AuthService, MainService, UserRepository, LocalStrategy, JwtStrategy],
+  providers: [AuthService, MainService, UserRepository, LocalStrategy, JwtStrategy, UserProfile],
 })
 export class MainModule {}

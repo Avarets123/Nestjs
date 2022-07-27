@@ -15,7 +15,6 @@ import { JwtAuthGuard } from './authentication/jwt.strategy';
 import { LocalAuthGuard } from './authentication/local.strategy';
 import { CreatePostDto } from './dto/post.create.dto';
 import { CreateUserDto } from './dto/user.create.dto';
-import { LoginUserDto } from './dto/user.login.dto';
 import { IReqWithUser } from './interface/reqWithUser.interface';
 import { MainService } from './main.service';
 import { PostSchema } from './schema/post.schema';

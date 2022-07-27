@@ -1,3 +1,5 @@
+import { classes } from '@automapper/classes';
+import { AutomapperModule } from '@automapper/nestjs';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,6 +13,10 @@ import { MainModule } from './main/main.module';
     MainModule,
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '../.env' }),
     TypeOrmModule.forRootAsync(typeormConfig()),
+    AutomapperModule.forRoot({
+      options: [{ name: 'common', pluginInitializer: classes }],
+      singular: true,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

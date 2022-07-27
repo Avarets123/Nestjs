@@ -1,3 +1,4 @@
+import { AutoMap } from '@automapper/classes';
 import { hash } from 'bcrypt';
 import { Exclude } from 'class-transformer';
 import {
@@ -14,12 +15,15 @@ import { PostSchema } from './post.schema';
 
 @Entity('user')
 export class UserSchema implements UserEntity {
+  @AutoMap()
   @PrimaryGeneratedColumn()
   id: number;
 
+  @AutoMap()
   @Column({ nullable: true })
   name?: string;
 
+  @AutoMap()
   @Column({ unique: true, nullable: false })
   email: string;
 
@@ -27,9 +31,11 @@ export class UserSchema implements UserEntity {
   @Exclude()
   password: string;
 
+  @AutoMap()
   @CreateDateColumn()
   createdAt: Date;
 
+  @AutoMap()
   @Column({ nullable: true })
   // @Transform((value) => {
   //   if (value !== null) {
@@ -49,8 +55,8 @@ export class UserSchema implements UserEntity {
   @JoinColumn()
   posts: PostSchema[];
 
-  @BeforeInsert()
-  private async hashPassword(): Promise<void> {
-    this.password = await hash(this.password, 9);
-  }
+  // @BeforeInsert()
+  // private async hashPassword(): Promise<void> {
+  //   this.password = await hash(this.password, 9);
+  // }
 }
